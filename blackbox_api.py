@@ -192,6 +192,7 @@ async def main():
     mode = None
     agent = None
     agents = []
+    upload = None
     while True:
         query = str(input("query: "))
         if query == "continue":
@@ -218,9 +219,11 @@ async def main():
         if query == "removeagent":
             agent = None
             continue
-
+        if query == "upload":
+            upload = str(input("path or url to what you want to upload: "))
+            query = str(input("query to go with that: "))
         botresponse = ""
-        async for msg in blackbox_api.blackbox(query=query if query != "continue" else None, history=history if history else None, mode=mode, chunk_size=20, trending_agent=agent):
+        async for msg in blackbox_api.blackbox(query=query if query != "continue" else None, history=history if history else None, mode=mode, chunk_size=20, trending_agent=agent, upload=upload):
             botresponse += msg
             print(msg, end="")
         print(f"\n\n\n\n\n\n\n\nquery: {query}\n")

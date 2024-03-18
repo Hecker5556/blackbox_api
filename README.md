@@ -32,6 +32,7 @@ history - prints out current session history
 getagents - prints out a list of trending agents 
 setagent - prompts to set agent for use with the bot
 removeagent - removes the currently used agent
+upload - upload something from a path or a url
 
 In python
 ```python
