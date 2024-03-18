@@ -144,7 +144,7 @@ class blackbox_api:
                 async with session.post('https://www.blackbox.ai/api/upload', data=data, proxy=proxy if proxy and proxy.startswith("https") else None) as r:
                     response = await r.json()
                     response = response['response']
-                query = f"FILE:BB\n$#$\n{response}\n$#$\{query}"
+                query = f"FILE:BB\n$#$\n{response}\n$#$\{query}" if len(response.replace("\n")) > 1 else f"nothing recognized in the image, user query: {query}"
             json_data = {
                 'previewToken': None,
                 'codeModelMode': True,
