@@ -166,27 +166,30 @@ class blackbox_api:
 
             url = 'https://www.blackbox.ai/api/chat'
             temp = ""
+            error = False
             async with session.post(url, headers=headers, json=json_data, proxy=proxy if proxy and proxy.startswith("https") else None) as r:
-                if r.status == 502:
-                    yield ""
-                while True:
-                    chunk = await r.content.read(1024)
-                    if not chunk:
-                        break
-                    if not chunk_size:
-                        yield chunk.decode()
-                    else:
-                        if len(temp) + len(chunk.decode()) < chunk_size:
-                            temp += chunk.decode()
-                        elif len(temp) + len(chunk.decode()) == chunk_size:
-                            yield temp + chunk.decode()
-                            temp = ""
-                        elif len(temp) + len(chunk.decode()) > chunk_size:
-                            for i in textwrap.wrap(temp+chunk.decode(), chunk_size, replace_whitespace=False, drop_whitespace=False):
-                                yield i
-                            temp = ""
-                if temp:
-                    yield temp
+                if r.status not in [200, 206]:
+                    yield f"ERROR: STATUS CODE: {r.status}"
+                    error = True
+                if not error:
+                    while True:
+                        chunk = await r.content.read(1024)
+                        if not chunk:
+                            break
+                        if not chunk_size:
+                            yield chunk.decode()
+                        else:
+                            if len(temp) + len(chunk.decode()) < chunk_size:
+                                temp += chunk.decode()
+                            elif len(temp) + len(chunk.decode()) == chunk_size:
+                                yield temp + chunk.decode()
+                                temp = ""
+                            elif len(temp) + len(chunk.decode()) > chunk_size:
+                                for i in textwrap.wrap(temp+chunk.decode(), chunk_size, replace_whitespace=False, drop_whitespace=False):
+                                    yield i
+                                temp = ""
+                    if temp:
+                        yield temp
 async def main():
     history = []
     mode = None
