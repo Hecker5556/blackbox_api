@@ -1,5 +1,5 @@
 # Simple Blackbox.ai API script
-completely free (for now) authentication-less llm with file reading capabilities and larger input capablity
+completely free (for now) authentication-less llm with file reading capabilities (only text reading, no image recognition) and larger input capablity
 
 [https://blackbox.ai](https://blackbox.ai)
 ## Installation
