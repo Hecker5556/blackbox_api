@@ -73,7 +73,7 @@ class blackbox_api:
             history (list[dict]) - history to give to the ai. should be like [{"content": "", "role": "user"/"assistant"}]
             mode (Literal['continue']) - whether to make ai continue from what it last said, required on if no query
             upload (str OR bytes OR BufferedReader) - file to upload to the ai, can be https link, path, bytes or a reader (open(file, 'rb'))
-            proxy (str) - proxy to use =, can be socks5 or https
+            proxy (str) - proxy to use, can be socks5 or https
             chunk_size (int) - yield text with that size, if None, yield as you receive the response
             trending_agent(str) - trending agent to use, you can get a list from the get_trending_agents
         """
