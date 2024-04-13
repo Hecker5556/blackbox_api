@@ -66,7 +66,7 @@ class blackbox_api:
         return trendingagents
     async def blackbox(query: str = None, history: list[dict] = None, mode: Literal['continue'] = None, 
                        upload: str | bytes | BufferedReader = None, proxy: str = None, chunk_size: int = None,
-                       trending_agent: str = None):
+                       trending_agent: str = None, offline_mode: bool = False):
         """
         Args:
             query (str) - what to ask the ai
@@ -75,7 +75,8 @@ class blackbox_api:
             upload (str OR bytes OR BufferedReader) - file to upload to the ai, can be https link, path, bytes or a reader (open(file, 'rb'))
             proxy (str) - proxy to use, can be socks5 or https
             chunk_size (int) - yield text with that size, if None, yield as you receive the response
-            trending_agent(str) - trending agent to use, you can get a list from the get_trending_agents
+            trending_agent (str) - trending agent to use, you can get a list from the get_trending_agents
+            offline_mode (bool) - whether the ai model should use sources from the internet (for example news from a few minutes ago)
         """
         if mode and not query and not history:
             raise ValueError("ai requires history to continue what they were saying")
@@ -153,7 +154,8 @@ class blackbox_api:
                 'isMicMode': False,
                 'isChromeExt': False,
                 'githubToken': None,
-                'mode': mode
+                'mode': mode,
+                'webSearchMode': offline_mode,
             }
             if trending_agent and not mode:
                 json_data['trendingAgentMode'] = {"mode": True, "id": trending_agent}
@@ -196,6 +198,7 @@ async def main():
     agent = None
     agents = []
     upload = None
+    websearch = False
     while True:
         query = str(input("query: "))
         if query == "continue":
@@ -225,8 +228,10 @@ async def main():
         if query == "upload":
             upload = str(input("path or url to what you want to upload: "))
             query = str(input("query to go with that: "))
+        if query == "web":
+            websearch = True
         botresponse = ""
-        async for msg in blackbox_api.blackbox(query=query if query != "continue" else None, history=history if history else None, mode=mode, chunk_size=20, trending_agent=agent, upload=upload):
+        async for msg in blackbox_api.blackbox(query=query if query != "continue" else None, history=history if history else None, mode=mode, chunk_size=20, trending_agent=agent, upload=upload, offline_mode=websearch):
             botresponse += msg
             print(msg, end="")
         print(f"\n\n\n\n\n\n\n\nquery: {query}\n")
